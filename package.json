@@ -1,0 +1,58 @@
+{
+  "name": "gameutil",
+  "productName": "GameUtil",
+  "version": "0.4.0",
+  "description": "GameUtil: launcher que detecta el software instalado en Windows y lo separa en Juegos y Software.",
+  "main": "main.js",
+  "private": false,
+  "scripts": {
+    "postinstall": "node scripts/setup.js",
+    "prestart": "node scripts/setup.js",
+    "start": "electron .",
+    "test": "node test/run.js",
+    "icons": "node scripts/make-icon.js",
+    "dist": "electron-builder --win portable --x64",
+    "dist:portable": "electron-builder --win portable --x64",
+    "checksums": "node scripts/checksums.js"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "rcedit": "^4.0.1"
+  },
+  "build": {
+    "appId": "com.gameutil.app",
+    "productName": "GameUtil",
+    "copyright": "MIT License",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "renderer/**/*",
+      "!**/*.test.js"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "executableName": "GameUtil"
+    },
+    "portable": {
+      "artifactName": "GameUtil-Portable-${version}.${ext}"
+    }
+  },
+  "license": "MIT",
+  "author": "GameUtil contributors",
+  "engines": {
+    "node": ">=18"
+  }
+}

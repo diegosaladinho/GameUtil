@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: lib:; font-src 'self';">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GameUtil</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-motion="on">
+  <div id="splash" class="splash" aria-hidden="true">
+    <div class="splash-drag"></div>
+    <div class="splash-glow"></div>
+    <div class="splash-core">
+      <svg class="splash-mark" viewBox="0 0 64 64" width="84" height="84" focusable="false">
+        <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7b6cff"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs>
+        <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#sg)"/>
+        <path d="M24 19.5v25a2 2 0 0 0 3 1.7l20-12.5a2 2 0 0 0 0-3.4L27 17.8a2 2 0 0 0-3 1.7z" fill="#0b0d12"/>
+      </svg>
+      <div class="splash-word"><span>G</span><span>A</span><span>M</span><span>E</span><span class="u">U</span><span class="u">T</span><span class="u">I</span><span class="u">L</span></div>
+      <div class="splash-bar"><i></i></div>
+    </div>
+  </div>
+  <div id="app">
+    <header class="titlebar">
+      <div class="tb-brand"><span class="tb-mark" aria-hidden="true"></span>GameUtil</div>
+      <div class="tb-controls">
+        <button class="tb-btn" id="win-min" type="button" aria-label="Minimizar"></button>
+        <button class="tb-btn" id="win-max" type="button" aria-label="Maximizar"></button>
+        <button class="tb-btn close" id="win-close" type="button" aria-label="Cerrar"></button>
+      </div>
+    </header>
+
+    <aside class="side" aria-label="Biblioteca">
+      <div class="side-top">
+        <div class="seg" role="tablist" aria-label="Tipo">
+          <button id="tab-game" class="seg-btn" type="button" data-type="game" role="tab" aria-selected="true">Juegos <span class="n" id="count-game">0</span></button>
+          <button id="tab-tool" class="seg-btn" type="button" data-type="tool" role="tab" aria-selected="false">Software <span class="n" id="count-tool">0</span></button>
+        </div>
+        <label class="search">
+          <span class="sr">Buscar en la biblioteca</span>
+          <input id="search" type="search" placeholder="Buscar" autocomplete="off" spellcheck="false">
+        </label>
+        <div class="filters">
+          <select id="sort" aria-label="Ordenar por">
+            <option value="name">Nombre</option>
+            <option value="hours">Más jugados</option>
+            <option value="recent">Recientes</option>
+          </select>
+          <select id="filter" aria-label="Filtrar"></select>
+        </div>
+      </div>
+      <div id="list" class="list" role="listbox" aria-label="Elementos"></div>
+      <div id="auto-status" class="auto-status" hidden></div>
+      <div class="side-foot">
+        <button id="btn-scan" class="btn" type="button"></button>
+        <button id="btn-online" class="btn ghost" type="button" title="Descarga descripción, estudio, banner y logo desde Steam"></button>
+        <button id="btn-settings" class="btn icon" type="button" aria-label="Ajustes de la aplicación" title="Ajustes de la aplicación"></button>
+      </div>
+    </aside>
+
+    <main class="stage">
+      <div class="backdrop" aria-hidden="true">
+        <div class="bd" id="bd-a"></div>
+        <div class="bd" id="bd-b"></div>
+        <div class="glow"></div>
+      </div>
+      <div id="detail" class="detail"></div>
+    </main>
+  </div>
+
+  <div id="busy" class="busy" role="status" aria-live="polite" hidden>
+    <span class="busy-text" id="busy-text"></span>
+    <div class="busy-bar"><span id="busy-fill"></span></div>
+    <button class="btn small" id="busy-cancel" type="button">Cancelar</button>
+  </div>
+  <div id="close-menu" class="close-menu" role="menu" aria-label="Cerrar GameUtil" hidden>
+    <button id="cm-tray" class="cm-item" type="button" role="menuitem"><b>Minimizar a la bandeja</b><span>Sigue contando horas en segundo plano</span></button>
+    <button id="cm-quit" class="cm-item" type="button" role="menuitem"><b>Cerrar por completo</b><span>Sale de GameUtil y deja de medir horas</span></button>
+    <label class="cm-remember"><input id="cm-remember" type="checkbox"> Recordar mi elección</label>
+  </div>
+  <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+
+  <dialog id="dlg-item" class="dlg" aria-labelledby="dlg-item-title"></dialog>
+  <dialog id="dlg-app" class="dlg" aria-labelledby="dlg-app-title"></dialog>
+  <dialog id="dlg-data" class="dlg dlg-narrow" aria-labelledby="dlg-data-title"></dialog>
+
+  <script src="tour.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
