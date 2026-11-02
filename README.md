@@ -12,7 +12,7 @@ GameUtil es de código abierto (MIT). Hay dos formas de usarlo (detalles en [BUI
    npm start
    ```
    Necesitas Node.js 18 o superior. Si npm bloquea la descarga de Electron, `npm start` la hace solo.
-2. **Versión portable**: haz doble clic en `compile.bat` y obtendrás `dist\GameUtil-Portable-<versión>.exe`, un solo archivo sin instalar. Sus datos (horas, personalización, imágenes) se guardan siempre en `%APPDATA%\GameUtil`, no junto al `.exe`.
+2. **Versión portable**: haz doble clic en `compilar.bat` y obtendrás `dist\GameUtil-Portable-<versión>.exe`, un solo archivo sin instalar. Sus datos (horas, personalización, imágenes) se guardan siempre en `%APPDATA%\GameUtil`, no junto al `.exe`.
 
 El `.exe` no está firmado: Windows SmartScreen puede avisar. Para colaborar, mira [CONTRIBUTING.md](CONTRIBUTING.md).
 

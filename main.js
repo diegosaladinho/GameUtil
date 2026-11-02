@@ -31,6 +31,15 @@ const { EXTS } = require('./src/images');
 const { needsAutofill } = require('./src/autofill');
 const { migrateUserData } = require('./src/migrate');
 const backup = require('./src/backup');
+
+// El icono se dibuja por código (~115 ms para 256 px). Se genera una vez y se guarda; los arranques siguientes solo lo leen.
+function cachedIcon(size) {
+  const file = path.join(app.getPath('userData'), `icon-${size}.png`);
+  try { const b = fs.readFileSync(file); if (b.length > 100) return nativeImage.createFromBuffer(b); } catch { /* aún no existe */ }
+  const png = makeIconPng(size);
+  try { fs.writeFileSync(file, png); } catch { /* sin caché: se genera cada vez */ }
+  return nativeImage.createFromBuffer(png);
+}
 const { dataDir } = require('./src/paths');
 
 // El esquema "lib://" sirve las imágenes locales a la interfaz sin abrirle el disco.
@@ -54,6 +63,7 @@ let tray = null;
 let store = null;
 let tracker = null;
 let quitting = false;
+let bootData = null;
 let busy = false;
 let cancelFlag = false;
 
@@ -641,7 +651,11 @@ function accentFor(key) {
 function registerIpc() {
   const h = (name, fn) => ipcMain.handle(name, async (_e, ...a) => fn(...a));
 
-  h('app:state', async () => { await refreshSteam(); rebuild(); return statePayload(); });
+  // La primera petición usa lo que ya preparó el arranque; las siguientes releen Steam y reconstruyen.
+  h('app:state', async () => {
+    if (bootData) { const p = bootData; bootData = null; await p; return statePayload(); }
+    await refreshSteam(); rebuild(); return statePayload();
+  });
 
   h('app:scan', async () => {
     await stopAuto();
@@ -925,11 +939,11 @@ function registerProtocol() {
 // ------------------------------------------------------------------ ventana ----
 
 function createWindow() {
-  const icon = nativeImage.createFromBuffer(makeIconPng(256));
+  const icon = cachedIcon(256);
   win = new BrowserWindow({
     width: 1320, height: 820, minWidth: 1000, minHeight: 640,
     frame: false, show: false, title: APP_NAME, icon,
-    backgroundColor: nativeTheme.shouldUseDarkColors ? '#0b0d12' : '#eef0f5',
+    backgroundColor: store.settings.data.splash !== false ? '#07080c' : (nativeTheme.shouldUseDarkColors ? '#0b0d12' : '#eef0f5'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true, nodeIntegration: false, sandbox: true
@@ -984,7 +998,7 @@ function showWindow() {
 
 function createTray() {
   try {
-    tray = new Tray(nativeImage.createFromBuffer(makeIconPng(32)));
+    tray = new Tray(cachedIcon(32));
     tray.setToolTip(APP_NAME);
     tray.setContextMenu(Menu.buildFromTemplate([
       { label: 'Abrir', click: showWindow },
@@ -1026,11 +1040,16 @@ if (!app.requestSingleInstanceLock()) {
     nativeTheme.themeSource = th === 'light' || th === 'dark' ? th : 'system';
     registerProtocol();
     registerIpc();
-    await refreshSteam();
-    rebuild();
+    // La ventana (y su pantalla de carga) aparece cuanto antes. Leer Steam y montar la biblioteca
+    // ocurre en paralelo y la interfaz lo espera en «app:state».
     createTray();
     createWindow();
-    if (IS_WIN) { startTracker(); ensureIcons(); }
-    setTimeout(() => autoFill(), 6000);
+    bootData = (async () => { await refreshSteam(); rebuild(); })();
+    bootData.then(() => {
+      // Lo que no hace falta para pintar la primera pantalla espera a que la app esté abierta:
+      // PowerShell (seguimiento de procesos) y la extracción de iconos compiten por CPU y disco con el arranque.
+      if (IS_WIN) setTimeout(() => { startTracker(); ensureIcons(); }, 3500);
+      setTimeout(() => autoFill(), 7000);
+    });
   });
 }

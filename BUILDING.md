@@ -36,6 +36,14 @@ npm run checksums      # crea dist\SHA256SUMS.txt
 
 Resultado en `dist\`: `GameUtil-Portable-<versión>.exe` y `SHA256SUMS.txt`.
 
+### Velocidad de arranque
+
+Un `.exe` portable se descomprime en una carpeta temporal cada vez que se abre, y esa descompresión es la parte más lenta del arranque. Por eso `npm run dist` genera el portable **sin compresión** (arranca más rápido, pesa más) y solo con los idiomas español e inglés de Chromium.
+
+- `npm run dist`: portable de arranque rápido (más grande).
+- `npm run dist:small`: portable con máxima compresión (descarga más pequeña, arranque más lento).
+- `npm run dist:folder`: carpeta `dist\win-unpacked` con `GameUtil.exe`, sin descomprimir nada. Es lo más rápido; se puede comprimir en un .zip para repartirla.
+
 ## Compilar sin Windows: GitHub Actions
 
 El flujo `.github/workflows/build.yml` compila en un equipo Windows de GitHub. Sube el proyecto a un repositorio, abre **Actions > Compilar GameUtil > Run workflow** (o crea una etiqueta `v0.4.0`) y descarga el `.exe` y `SHA256SUMS.txt`.

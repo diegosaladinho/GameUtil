@@ -13,7 +13,9 @@
     "icons": "node scripts/make-icon.js",
     "dist": "electron-builder --win portable --x64",
     "dist:portable": "electron-builder --win portable --x64",
-    "checksums": "node scripts/checksums.js"
+    "checksums": "node scripts/checksums.js",
+    "dist:small": "electron-builder --win portable --x64 -c.compression=maximum",
+    "dist:folder": "electron-builder --win --x64 --dir"
   },
   "devDependencies": {
     "electron": "^33.2.0",
@@ -48,7 +50,12 @@
     },
     "portable": {
       "artifactName": "GameUtil-Portable-${version}.${ext}"
-    }
+    },
+    "compression": "store",
+    "electronLanguages": [
+      "es",
+      "en-US"
+    ]
   },
   "license": "MIT",
   "author": "GameUtil contributors",
